@@ -10,6 +10,7 @@ app = createApp(os.getenv("FLASK_ENV", "development"))
 def shell():
     return {"db": db, "User": User}
 
+
 @app.cli.command("add-user", short_help="Add a new user")
 @click.argument("email")
 @click.option(
@@ -25,7 +26,7 @@ def addUser(email, admin,):
     db.session.add(newUser)
     db.session.commit()
     userType = "admin user" if admin else "user"
-    newUserToken=newUser.encodeAccessToken()
+    newUserToken = newUser.encodeAccessToken()
     message = f"Successfully added new {userType}:\n {newUser} \n JWT: {newUserToken}"
     click.secho(message, fg="blue", bold=True)
     return 0
