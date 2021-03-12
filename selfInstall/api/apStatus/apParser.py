@@ -12,17 +12,9 @@ accessPointStatusReqParser.add_argument(
 user_model = Model(
     "mac",
     {
-        'Controller': String,
-        'ControllerIp': String,
         'IpAddress': String,
-        'Location': String,
         'Model': String,
         'Name': String,
-        'operationState': String,
-        'radioMac': String,
-        'radioOperStatus': String,
-        'radioSlot': String,
-        'radioStatus': String,
-        'radioTxPower': String,
+        'operationState': String
     },
 )
