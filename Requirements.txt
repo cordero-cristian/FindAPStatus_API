@@ -1,0 +1,11 @@
+Flask
+Flask-Cors
+Flask-Migrate
+flask-restx
+Flask-SQLAlchemy
+PyJWT==1.7.1
+python-dateutil
+python-dotenv
+requests
+urllib3
+werkzeug==0.16.1
