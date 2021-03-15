@@ -12,5 +12,5 @@ def work(mac):
             break
     if apVendor == 'Ruckus':
         resp = apiND.getAPStatus(mac)
-    
+        return resp
     return mac
