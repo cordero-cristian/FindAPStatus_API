@@ -1,0 +1,6 @@
+selfInstall/__pycache__/
+selfInstall/api/__pycache__/
+selfInstall/api/auth/__pycache__/
+selfInstall/models/__pycache__/
+selfInstall/api/apStatus/__pycache__/
+*.db
