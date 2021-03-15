@@ -21,9 +21,8 @@ import json
 import csv
 import urllib3
 import time
-import csv
 import re
-import sdkSCG
+from RuckusFunctions import sdkSCG
 import datetime
 
 requests.adapters.DEFAULT_RETRIES = 5
@@ -45,7 +44,7 @@ try:
 except:
 	pass
 	
-import apiRuckusAuth_API
+from RuckusFunctions import apiRuckusAuth_API
 
 
 class clsSdkRndAPI:
