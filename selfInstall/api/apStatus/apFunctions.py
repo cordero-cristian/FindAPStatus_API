@@ -8,5 +8,14 @@ ciscoFunctions = CiscoWlcFunctions()
 
 @tokenRequired
 def work(mac):
-    returnDict = ciscoFunctions.findCiscoAccessPoint(mac)
-    return returnDict
+
+    apVendor = 'Cisco'
+#    for oui in RuckusOui:
+#        if re.search(oui, mac, re.IGNORECASE):
+#            apVendor = 'Ruckus'
+#            break
+#    if apVendor == 'Ruckus':
+#        resp = apiND.getAPStatus(mac)
+#        return resp
+    resp = ciscoFunctions.findCiscoAccessPoint(mac)
+    return resp
