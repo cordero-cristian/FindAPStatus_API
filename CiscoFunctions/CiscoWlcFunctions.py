@@ -183,7 +183,9 @@ class CiscoWlcFunctions():
                           'configState': None,
                           'connectionState': 'Disconnect'
                           }
-            return returnDict
+            return standardReturn(statusCode=HTTPStatus.UNPROCESSABLE_ENTITY,
+                                  statusText='NOT_FOUND_ON_vWLC',
+                                  response=returnDict)
         controllerIp = dfForReturn.iloc[0]['controllerIp']
         apName = dfForReturn.iloc[0]['apName']
         apConfigGeneral = self.getApConfigGeneral(controllerIp, apName)
