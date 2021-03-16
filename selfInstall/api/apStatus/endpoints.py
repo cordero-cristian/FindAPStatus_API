@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask_restx import Namespace, Resource
 
 from selfInstall.api.apStatus.apParser import accessPointStatusReqParser
-from selfInstall.api.apStatus.apFunctions import work
+from selfInstall.api.apStatus.apFunctions import getAccessPointStatus
 
 selfInstallNs = Namespace(name="self-install", validate=True)
 
@@ -22,4 +22,4 @@ class RegisterUser(Resource):
         """ Find an Access Point and return its Status """
         requestData = accessPointStatusReqParser.parse_args()
         mac = requestData.get("mac")
-        return work(mac)
+        return getAccessPointStatus(mac)
