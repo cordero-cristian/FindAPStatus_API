@@ -8,6 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 import pprint
 import pandas as pd
 import json
+from http import HTTPStatus
+
 
 currentDir = Path().cwd() / 'CiscoFunctions'
 jsonFile = currentDir / 'ControllersAndMarkets.json'
@@ -194,4 +196,4 @@ class CiscoWlcFunctions():
                       'configState': apConfigGeneral[0]['operation_state'],
                       'connectionState': 'Connect'
                       }
-        return standardReturn(statusCode=200, statusText='FOUND_ON_vWLC', response=returnDict)
+        return standardReturn(statusCode=HTTPStatus.OK, statusText='FOUND_ON_vWLC', response=returnDict)
