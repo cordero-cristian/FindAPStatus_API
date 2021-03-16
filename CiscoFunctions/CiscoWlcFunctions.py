@@ -175,7 +175,7 @@ class CiscoWlcFunctions():
             # find the Ap
             dfForReturn = allAccessPointDf.loc[allAccessPointDf['mac'] == apMac]
         # the loc function returns a key error if unable to find the MAC
-        except KeyError:
+        except IndexError:
             returnDict = {'mac': None,
                           'Model': None,
                           'Name': None,
