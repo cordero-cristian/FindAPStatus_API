@@ -7,7 +7,6 @@ from netmiko.ssh_exception import AuthenticationException
 from concurrent.futures import ThreadPoolExecutor
 import pprint
 import pandas as pd
-import time
 import json
 
 currentDir = Path().cwd() / 'CiscoFunctions'
