@@ -19,7 +19,6 @@ class RegisterUser(Resource):
     @selfInstallNs.response(int(HTTPStatus.OK), "Status of AP Goes Here", user_model)
     @selfInstallNs.response(int(HTTPStatus.NOT_FOUND), "Access Point Could Not Be Found")
     @selfInstallNs.response(int(HTTPStatus.INTERNAL_SERVER_ERROR), "Internal server error")
-    @selfInstallNs.marshal_with(user_model)
     def get(self):
         """ Find an Access Point and return its Status """
         requestData = accessPointStatusReqParser.parse_args()
