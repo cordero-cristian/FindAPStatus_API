@@ -13,7 +13,7 @@ def getAccessPointStatus(mac):
     apVendor = 'Cisco'
 
     for oui in RuckusOui:
-        if re.search(mac, oui, re.IGNORECASE):
+        if re.search(oui, mac, re.IGNORECASE):
             apVendor = 'Ruckus'
             break
 
