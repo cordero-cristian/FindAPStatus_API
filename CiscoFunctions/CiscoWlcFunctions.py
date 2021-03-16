@@ -194,4 +194,4 @@ class CiscoWlcFunctions():
                       'configState': apConfigGeneral[0]['operation_state'],
                       'connectionState': 'Connect'
                       }
-        return standardReturn(status_code=200,statusText='FOUND_ON_vWLC',response=returnDict)
+        return standardReturn(statusCode=200, statusText='FOUND_ON_vWLC', response=returnDict)
