@@ -112,7 +112,6 @@ class CiscoWlcFunctions():
         dfToReturn.index.name = 'mac'
         # remove the index of AP's mac's and turn it into a column
         dfToReturn.reset_index(inplace=True)
-        pprint.pprint(dfToReturn)
         return dfToReturn
 
     # this function is used to get the general config of a accessPoint. requires a WLC IP and AP NAME
@@ -120,11 +119,8 @@ class CiscoWlcFunctions():
         try:
             # login sends 'config paging disbaled' after logging in
             netmikoConnectObj = self.controllerLogin(wlcIp)
-        except Exception:
-            pprint.pprint(f'going to wait another 210 sec before trying to connect to {wlcIp}')
-            time.sleep(210)
-            pprint.pprint(f'attempting to reconnect to {wlcIp}')
-            netmikoConnectObj = self.controllerLogin(wlcIp)
+        except Exception as err:
+            return err
         command = f'show ap config general {apName}'
         apConfigGeneral = netmikoConnectObj.send_command(command, use_textfsm=True)
         return apConfigGeneral
@@ -168,7 +164,6 @@ class CiscoWlcFunctions():
         with ThreadPoolExecutor(max_workers=len(self.dictOfControllers)) as executor:
             # make a list of DataFrames containing all the info about all the Access Points from every single controller
             listOfDataFrames = executor.map(self.getAllAccessPointsFromSingleController, wlcIpList)
-
         # open everysingle DataFrame and dump the info into one single DataFrame and return it
         return pd.concat(listOfDataFrames, ignore_index=True)
 
