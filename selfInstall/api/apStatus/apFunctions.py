@@ -1,16 +1,26 @@
 from selfInstall.api.auth.decorators import tokenRequired
-import re
-from selfInstall.api.apStatus import ruckusOui
+from CiscoFunctions.CiscoWlcFunctions import CiscoWlcFunctions
+from selfInstall.api.apStatus.ruckusOui import RuckusOui
 from selfInstall import apiND
+import re
+
+ciscoFunctions = CiscoWlcFunctions()
+
 
 @tokenRequired
-def work(mac):
+def getAccessPointStatus(mac):
+
     apVendor = 'Cisco'
-    for oui in ruckusOui:
-        if re.search(mac, oui, re.IGNORECASE):
+
+    for oui in RuckusOui:
+        if re.search(oui, mac, re.IGNORECASE):
             apVendor = 'Ruckus'
             break
+
     if apVendor == 'Ruckus':
         resp = apiND.getAPStatus(mac)
-    
-    return mac
+        return resp
+
+    elif apVendor == 'Cisco':
+        resp = ciscoFunctions.findCiscoAccessPoint(mac)
+        return resp

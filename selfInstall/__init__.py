@@ -5,6 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 from selfInstall.config import getConfig
 
+from RuckusFunctions import sdkRND_API
+apiND = sdkRND_API.clsSdkRndAPI()
+
 cors = CORS()
 db = SQLAlchemy()
 migrate = Migrate()

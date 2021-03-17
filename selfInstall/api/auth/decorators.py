@@ -44,20 +44,20 @@ def checkAccessToken():
             description="""Please Contact DL-NTO-Wireless-Analytics <DL-NTO-Wireless-Analytics@charter.com> if you
             believe this to be incorrect""",
             error="invalid_token",
-            error_description="Access token expired",
+            errorDescription="Access token expired",
         )
     elif result == "Invalid token":
         raise ApiUnauthorized(
             description="""Please Contact DL-NTO-Wireless-Analytics <DL-NTO-Wireless-Analytics@charter.com> if you
             believe this to be incorrect""",
             error="invalid_token",
-            error_description="Invalid token",
+            errorDescription="Invalid token",
         )
     if result is None:
         raise ApiUnauthorized(
             description="""Please Contact DL-NTO-Wireless-Analytics <DL-NTO-Wireless-Analytics@charter.com> if you
             believe this to be incorrect""",
             error="invalid_token",
-            error_description="Invalid token",
+            errorDescription="Invalid token",
         )
     return result
