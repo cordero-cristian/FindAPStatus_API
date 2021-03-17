@@ -35,20 +35,11 @@ class CiscoWlcFunctions():
         self.dictOfControllers = dictOfControllerFromFile
 
     def controllerLogin(self, ip):
-        try:
-            connectObj = ConnectHandler(ip=ip,
-                                        port='22',
-                                        username=ciscoUserName,
-                                        password=ciscopw,
-                                        device_type='cisco_wlc_ssh')
-        except NetMikoTimeoutException as err:
-            raise Exception(f'Timeout Error unable to connect to {ip} error: {err}')
-
-        except SSHException as err:
-            raise Exception(f'SSH Error unable to connect to {ip} error: {err}')
-
-        except AuthenticationException as err:
-            raise Exception(f'Auth Error unable to connect to {ip} error: {err}')
+        connectObj = ConnectHandler(ip=ip,
+                                    port='22',
+                                    username=ciscoUserName,
+                                    password=ciscopw,
+                                    device_type='cisco_wlc_ssh')
         return connectObj
 
     # used for multithread functions.
@@ -65,8 +56,16 @@ class CiscoWlcFunctions():
         try:
             # login sends 'config paging disbaled' after logging in
             netmikoConnectObj = self.controllerLogin(wlcIp)
-        except Exception as err:
-            return err
+        except NetMikoTimeoutException:
+            return standardReturn(statusCode=HTTPStatus.CONFLICT,
+                                  statusText=f'TCP connection to device at ip: {wlcIp} failed')
+
+        except SSHException as err:
+            return standardReturn(statusCode=HTTPStatus.CONFLICT, statusText=str(err))
+
+        except AuthenticationException as err:
+            return standardReturn(statusCode=HTTPStatus.CONFLICT, statusText=str(err))
+
         # command to get the information about all Access Points currently connected to the WLC
         command = 'show ap summary'
         # get the hostname from the netmiko obj
@@ -164,13 +163,19 @@ class CiscoWlcFunctions():
         # multithread the function to get an AP from a single controller, on all controllers at once.
         with ThreadPoolExecutor(max_workers=len(self.dictOfControllers)) as executor:
             # make a list of DataFrames containing all the info about all the Access Points from every single controller
-            listOfDataFrames = executor.map(self.getAllAccessPointsFromSingleController, wlcIpList)
-        # open everysingle DataFrame and dump the info into one single DataFrame and return it
-        return pd.concat(listOfDataFrames, ignore_index=True)
+            returnedObjects = executor.map(self.getAllAccessPointsFromSingleController, wlcIpList)
+        for obj in returnedObjects:
+            if isinstance(obj, dict):
+                return obj
+            if isinstance(obj, pd.DataFrame):
+                # open everysingle DataFrame and dump the info into one single DataFrame and return it
+                return pd.concat(returnedObjects, ignore_index=True)
 
     def findCiscoAccessPoint(self, apMac):
         # get all Aps from Funtion getAllAccessPoints
         allAccessPointDf = self.getAllAccessPoints()
+        if isinstance(allAccessPointDf, dict):
+            return allAccessPointDf
         try:
             # find the Ap
             dfForReturn = allAccessPointDf.loc[allAccessPointDf['mac'] == apMac]
