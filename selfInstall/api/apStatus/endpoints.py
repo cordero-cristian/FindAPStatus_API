@@ -26,6 +26,6 @@ class RegisterUser(Resource):
         mac = requestData.get("mac")
         response = getAccessPointStatus(mac)
         if response['status_code'] == HTTPStatus.OK:
-            return getAccessPointStatus(mac)
+            return response
         else:
             return abort(int(response['status_code']), response['status_text'])
