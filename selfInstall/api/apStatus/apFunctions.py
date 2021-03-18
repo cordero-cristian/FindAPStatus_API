@@ -3,13 +3,15 @@ from CiscoFunctions.CiscoWlcFunctions import CiscoWlcFunctions
 from selfInstall.api.apStatus.ruckusOui import RuckusOui
 from selfInstall import apiND
 import re
+from LoggingFunctions.apiLogger import apiLogger
 
 ciscoFunctions = CiscoWlcFunctions()
+apiLogger=apiLogger(__name__)
 
 
 @tokenRequired
 def getAccessPointStatus(mac):
-
+    apiLogger.logInfo(f"attempting a get request on {mac}")
     apVendor = 'Cisco'
 
     for oui in RuckusOui:
