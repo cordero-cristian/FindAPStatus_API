@@ -24,7 +24,7 @@ def standardReturn(statusCode=None, statusText=None, response=None, *args):
         'response': response
     }
     if args:
-        returnDict.update({'addtionalDetails': args})
+        returnDict.update({'additionalDetails': args})
         return returnDict
     return returnDict
 
