@@ -28,4 +28,4 @@ class apiLogger():
 
     def logException(self, msg, controllerIp=None):
         extras = dict({'ip': controllerIp})
-        self.logger.critical(msg, extra=extras)
+        self.logger.exception(msg, extra=extras)
