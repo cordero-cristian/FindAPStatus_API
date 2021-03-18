@@ -175,6 +175,7 @@ class CiscoWlcFunctions():
         # get all Aps from Funtion getAllAccessPoints
         allAccessPointDf = self.getAllAccessPoints()
         print(allAccessPointDf)
+        allAccessPointDf.to_csv('test.csv')
         if isinstance(allAccessPointDf, dict):
             return allAccessPointDf
         try:
