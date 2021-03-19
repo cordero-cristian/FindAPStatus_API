@@ -9,7 +9,8 @@ import pprint
 import pandas as pd
 import json
 from http import HTTPStatus
-
+from LoggingFunctions.apiLogger import apiLogger
+apiLogger = apiLogger(__name__)
 
 currentDir = Path().cwd() / 'CiscoFunctions'
 jsonFile = currentDir / 'ControllersAndMarkets.json'
@@ -56,6 +57,7 @@ class CiscoWlcFunctions():
         try:
             # login sends 'config paging disbaled' after logging in
             netmikoConnectObj = self.controllerLogin(wlcIp)
+            apiLogger.logInfo(f"logged onto Vwlc {wlcIp}")
         except NetMikoTimeoutException:
             return standardReturn(statusCode=HTTPStatus.CONFLICT,
                                   statusText=f'TCP connection to device at ip: {wlcIp} failed')
@@ -76,7 +78,7 @@ class CiscoWlcFunctions():
         hostname = hostname[1:-3]
         # send it
         allAccessPoints = netmikoConnectObj.send_command(command, use_textfsm=True)
-        pprint.pprint(f'ran {command} on {hostname} number of APs = {len(allAccessPoints)}')
+        apiLogger.logInfo(f'ran {command} on {hostname}: {wlcIp} number of APs = {len(allAccessPoints)}')
         # disconnect sends 'config paging enable' before 'logout' command
         # pprint.pprint(netmikoConnectObj.is_alive())
         for accessPoint in allAccessPoints:
@@ -112,6 +114,7 @@ class CiscoWlcFunctions():
         dfToReturn.index.name = 'mac'
         # remove the index of AP's mac's and turn it into a column
         dfToReturn.reset_index(inplace=True)
+        apiLogger.logInfo(f'got all Access Points from {hostname}: {wlcIp}')
         return dfToReturn
 
     # this function is used to get the general config of a accessPoint. requires a WLC IP and AP NAME
@@ -169,6 +172,7 @@ class CiscoWlcFunctions():
                 return obj
             if isinstance(obj, pd.DataFrame):
                 # open everysingle DataFrame and dump the info into one single DataFrame and return it
+                pprint.pprint(obj)
                 return pd.concat(returnedObjects, ignore_index=True)
 
     def findCiscoAccessPoint(self, apMac):
