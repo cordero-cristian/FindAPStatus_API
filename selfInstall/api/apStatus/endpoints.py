@@ -60,7 +60,8 @@ Can be one of the following:
         requestData = accessPointStatusReqParser.parse_args()
         mac = requestData.get("mac")
         response = getAccessPointStatus(mac)
-        if response['status_code'] == HTTPStatus.OK:
+        status_code = response.pop('status_code')
+        if status_code == HTTPStatus.OK:
             return response
         else:
-            return abort(int(response['status_code']), response['status_text'])
+            return abort(int(status_code), response['status_text'])
