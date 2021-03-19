@@ -167,19 +167,19 @@ class CiscoWlcFunctions():
         with ThreadPoolExecutor(max_workers=len(self.dictOfControllers)) as executor:
             # make a list of DataFrames containing all the info about all the Access Points from every single controller
             returnedObjects = executor.map(self.getAllAccessPointsFromSingleController, wlcIpList)
+        listOfDataFrames = list()
         for obj in returnedObjects:
             if isinstance(obj, dict):
                 return obj
             if isinstance(obj, pd.DataFrame):
                 # open everysingle DataFrame and dump the info into one single DataFrame and return it
-                pprint.pprint(obj)
-                return pd.concat(returnedObjects, ignore_index=True)
+                listOfDataFrames.append(obj)
+        return pd.concat(listOfDataFrames, ignore_index=True)
 
     def findCiscoAccessPoint(self, apMac):
         # get all Aps from Funtion getAllAccessPoints
         allAccessPointDf = self.getAllAccessPoints()
-        print(allAccessPointDf)
-        allAccessPointDf.to_csv('test.csv')
+        pprint.pprint(allAccessPointDf)
         if isinstance(allAccessPointDf, dict):
             return allAccessPointDf
         try:
