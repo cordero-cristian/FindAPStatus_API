@@ -6,7 +6,7 @@ import re
 from LoggingFunctions.apiLogger import apiLogger
 
 ciscoFunctions = CiscoWlcFunctions()
-apiLogger=apiLogger(__name__)
+apiLogger = apiLogger(__name__)
 
 
 @tokenRequired
