@@ -81,6 +81,7 @@ class CiscoWlcFunctions():
         apiLogger.logInfo(f'ran {command} on {hostname}: {wlcIp} number of APs = {len(allAccessPoints)}')
         # disconnect sends 'config paging enable' before 'logout' command
         # pprint.pprint(netmikoConnectObj.is_alive())
+        netmikoConnectObj.disconnect()
         for accessPoint in allAccessPoints:
             # if the accessPoint obj is a str, that means that there were no Access Points on the WLC
             if isinstance(accessPoint, str):
