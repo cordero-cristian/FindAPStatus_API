@@ -170,8 +170,9 @@ class CiscoWlcFunctions():
             returnedObjects = executor.map(self.getAllAccessPointsFromSingleController, wlcIpList)
         listOfDataFrames = list()
         for obj in returnedObjects:
-            if obj['status_code'] == HTTPStatus.CONFLICT:
-                continue
+            if obj['status_code']:
+                if obj['status_code'] == HTTPStatus.CONFLICT:
+                    continue
             # need to handle other exections here
             if isinstance(obj, pd.DataFrame):
                 # open everysingle DataFrame and dump the info into one single DataFrame and return it
