@@ -15,20 +15,46 @@ class RegisterUser(Resource):
 
     @selfInstallNs.doc(security="Bearer")
     @selfInstallNs.expect(accessPointStatusReqParser)
-    @selfInstallNs.response(int(HTTPStatus.OK), """Please see Response 'status_text' for addtional Info
+    @selfInstallNs.response(int(HTTPStatus.OK), """OK: Successful Attempt to Locate a Access Point
+
+Examine Response: 'status_text' for addtional Info
 
 Can be one of the following:
 
-FOUND_ON_CONTROLLER
-NOT_IN_DIRECTOR
-NOT_ON_CONTROLLER
+**FOUND_ON_CONTROLLER**
+**NOT_IN_DIRECTOR**
+**NOT_ON_CONTROLLER**
 """
                             )
-    @selfInstallNs.response(int(HTTPStatus.NOT_FOUND), "Access Point Could Not Be Found")
-    @selfInstallNs.response(int(HTTPStatus.CONFLICT), "Busy WLC or Vsz/RND")
-    @selfInstallNs.response(int(HTTPStatus.UNPROCESSABLE_ENTITY), "Not found on vWLC or Vsz")
-    @selfInstallNs.response(int(HTTPStatus.INTERNAL_SERVER_ERROR), "Internal server error")
-    @selfInstallNs.response(int(HTTPStatus.BAD_REQUEST), "BAD MAC FORMAT")
+    @selfInstallNs.response(int(HTTPStatus.BAD_REQUEST), """BAD_REQUEST: Incorrect formatting for a Access Point MAC Address
+
+Examine Response: 'status_text' for addtional Info
+
+Can be one of the following:
+
+**BAD_MAC_FORMAT**
+    """)
+    @selfInstallNs.response(int(HTTPStatus.UNAUTHORIZED), """UNAUTHORIZED: Bad JWT or Controller Logon Failure
+
+Examine Response: 'status_text' for addtional Info
+
+Can be one of the following:
+
+**CONTROLLER_UNAUTHORIZED**
+**DIRECTOR_UNAUTHORIZED**
+**INVALID_TOKEN**
+    """)
+    @selfInstallNs.response(int(HTTPStatus.SERVICE_UNAVAILABLE), """SERVICE_UNAVAILABLE: Critical Failure on a Controller System
+
+Examine Response: 'status_text' for addtional Info
+
+Can be one of the following:
+
+**DIRECTOR_FAILURE**
+**NO_RND_SESSIONS**
+**CONTROLLER_FAILURE**
+**SYSTEM_EXCEPTION**
+    """)
     def get(self):
         """ Find an Access Point and return its Status """
         requestData = accessPointStatusReqParser.parse_args()
