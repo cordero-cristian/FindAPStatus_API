@@ -21,10 +21,10 @@ def getAccessPointStatus(mac):
 
     if apVendor == 'Ruckus':
         resp = apiND.getAPStatus(mac)
-        resp.update({'vendor': apVendor})
+        resp["response"].update({'vendor': apVendor})
         return resp
 
     elif apVendor == 'Cisco':
         resp = ciscoFunctions.findCiscoAccessPoint(mac)
-        resp.update({'vendor': apVendor})
+        resp["response"].update({'vendor': apVendor})
         return resp
