@@ -233,7 +233,7 @@ class CiscoWlcFunctions():
                           }
             return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
                                   statusText='CONTROLLER_FAILURE', response=returnDict)
-         except IndexError as err:
+        except IndexError as err:
             returnDict = {'mac': None,
                           'Model': None,
                           'Name': None,
