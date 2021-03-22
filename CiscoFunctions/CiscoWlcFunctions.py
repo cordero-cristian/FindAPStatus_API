@@ -5,7 +5,6 @@ from netmiko.ssh_exception import NetMikoTimeoutException
 from paramiko.ssh_exception import SSHException
 from netmiko.ssh_exception import AuthenticationException
 from concurrent.futures import ThreadPoolExecutor
-import pprint
 import pandas as pd
 import json
 from http import HTTPStatus
@@ -197,12 +196,26 @@ class CiscoWlcFunctions():
             if isinstance(obj, pd.DataFrame):
                 # open everysingle DataFrame and dump the info into one single DataFrame and return it
                 listOfDataFrames.append(obj)
-        return pd.concat(listOfDataFrames, ignore_index=True)
+        try:
+            return pd.concat(listOfDataFrames, ignore_index=True)
+        except ValueError:
+            apiLogger.logCritical('failed: no access points retrieved')
+            returnDict = {'mac': None,
+                          'Model': None,
+                          'Name': None,
+                          'ip': None,
+                          'configState': None,
+                          'connectionState': 'Disconnect'
+                          }
+            return returnDict
 
     def findCiscoAccessPoint(self, apMac):
         # get all Aps from Funtion getAllAccessPoints
         allAccessPointDf = self.getAllAccessPoints()
-        pprint.pprint(allAccessPointDf)
+        if isinstance(allAccessPointDf, dict):
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
+                                  statusText='SYSTEM_EXCEPTION',
+                                  response=allAccessPointDf)
         try:
             # find the Ap
             # this will return an empty Data Frame if no mac is found
@@ -217,7 +230,7 @@ class CiscoWlcFunctions():
                           'connectionState': 'Disconnect'
                           }
             apiLogger.logInfo(f"unable to find requested Access Point {apMac}. error: {err}")
-            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
+            return standardReturn(statusCode=HTTPStatus.OK,
                                   statusText='NOT_ON_CONTROLLER',
                                   response=returnDict)
         try:
