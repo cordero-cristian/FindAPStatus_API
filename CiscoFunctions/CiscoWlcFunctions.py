@@ -250,8 +250,7 @@ class CiscoWlcFunctions():
 
         apName = dfForReturn.iloc[0]['apName']
         apConfigGeneral = self.getApConfigGeneral(controllerIp, apName)
-
-        if apConfigGeneral['status_code']:
+        if isinstance(apConfigGeneral, dict):
             returnDict = {'mac': dfForReturn.iloc[0]['mac'],
                           'Model': dfForReturn.iloc[0]['apModel'],
                           'Name': apName,
