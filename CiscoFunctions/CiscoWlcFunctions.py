@@ -36,6 +36,7 @@ class CiscoWlcFunctions():
         self.dictOfControllers = dictOfControllerFromFile
 
     def controllerLogin(self, ip):
+        apiLogger.logInfo(f"SSH attempt to vWLC {ip}")
         connectObj = ConnectHandler(ip=ip,
                                     port='22',
                                     username=ciscoUserName,
@@ -57,17 +58,19 @@ class CiscoWlcFunctions():
         try:
             # login sends 'config paging disbaled' after logging in
             netmikoConnectObj = self.controllerLogin(wlcIp)
-            apiLogger.logInfo(f"logged onto Vwlc {wlcIp}")
         except NetMikoTimeoutException:
-            return standardReturn(statusCode=HTTPStatus.CONFLICT,
+            apiLogger.logError(f'TCP connection to device at ip: {wlcIp} failed')
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
                                   statusText=f'TCP connection to device at ip: {wlcIp} failed')
 
         except SSHException as err:
-            return standardReturn(statusCode=HTTPStatus.CONFLICT, statusText=str(err))
+            apiLogger.logError(f'Failed SSH Attempt on device at ip: {wlcIp} failed')
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE, statusText=str(err))
 
         except AuthenticationException as err:
-            return standardReturn(statusCode=HTTPStatus.CONFLICT, statusText=str(err))
-
+            apiLogger.logError(f'failed Authentication Attempt on device at ip: {wlcIp} failed')
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE, statusText=str(err))
+        apiLogger.logInfo(f"logged onto vWLC {wlcIp}")
         # command to get the information about all Access Points currently connected to the WLC
         command = 'show ap summary'
         # get the hostname from the netmiko obj
@@ -78,10 +81,11 @@ class CiscoWlcFunctions():
         hostname = hostname[1:-3]
         # send it
         allAccessPoints = netmikoConnectObj.send_command(command, use_textfsm=True)
-        apiLogger.logInfo(f'ran {command} on {hostname}: {wlcIp} number of APs = {len(allAccessPoints)}')
+        apiLogger.logInfo(f'ran {command} on {hostname}:{wlcIp} number of APs = {len(allAccessPoints)}')
         # disconnect sends 'config paging enable' before 'logout' command
         # pprint.pprint(netmikoConnectObj.is_alive())
         netmikoConnectObj.disconnect()
+        apiLogger.logInfo(f"disconnected from {hostname}:{wlcIp}")
         for accessPoint in allAccessPoints:
             # if the accessPoint obj is a str, that means that there were no Access Points on the WLC
             if isinstance(accessPoint, str):
@@ -123,10 +127,24 @@ class CiscoWlcFunctions():
         try:
             # login sends 'config paging disbaled' after logging in
             netmikoConnectObj = self.controllerLogin(wlcIp)
-        except Exception as err:
-            return err
+        except NetMikoTimeoutException:
+            apiLogger.logError(f'TCP connection to device at ip: {wlcIp} failed')
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
+                                  statusText=f'TCP connection to device at ip: {wlcIp} failed')
+
+        except SSHException as err:
+            apiLogger.logError(f'Failed SSH Attempt on device at ip: {wlcIp} failed')
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE, statusText=str(err))
+
+        except AuthenticationException as err:
+            apiLogger.logError(f'failed Authentication Attempt on device at ip: {wlcIp} failed')
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE, statusText=str(err))
+        apiLogger.logInfo(f"logged onto vWLC {wlcIp}")
         command = f'show ap config general {apName}'
         apConfigGeneral = netmikoConnectObj.send_command(command, use_textfsm=True)
+        apiLogger.logInfo(f'ran {command} on {wlcIp}')
+        netmikoConnectObj.disconnect()
+        apiLogger.logInfo(f"disconnected from vWLC {wlcIp}")
         return apConfigGeneral
     '''
     example of show ap config general:
@@ -172,7 +190,8 @@ class CiscoWlcFunctions():
         for obj in returnedObjects:
             if isinstance(obj, dict):
                 if obj['status_code']:
-                    if obj['status_code'] == HTTPStatus.CONFLICT:
+                    if obj['status_code'] == HTTPStatus.SERVICE_UNAVAILABLE:
+                        apiLogger.logError('failed: could not get all Access Points from one or more vWLCs')
                         continue
             # need to handle other exections here
             if isinstance(obj, pd.DataFrame):
@@ -184,13 +203,12 @@ class CiscoWlcFunctions():
         # get all Aps from Funtion getAllAccessPoints
         allAccessPointDf = self.getAllAccessPoints()
         pprint.pprint(allAccessPointDf)
-        if isinstance(allAccessPointDf, dict):
-            return allAccessPointDf
         try:
             # find the Ap
+            # this will return an empty Data Frame if no mac is found
             dfForReturn = allAccessPointDf.loc[allAccessPointDf['mac'] == apMac]
-        # the loc function returns a key error if unable to find the MAC
-        except IndexError:
+            apiLogger.logInfo(f"Found requested Access Point {apMac}")
+        except IndexError as err:
             returnDict = {'mac': None,
                           'Model': None,
                           'Name': None,
@@ -198,12 +216,40 @@ class CiscoWlcFunctions():
                           'configState': None,
                           'connectionState': 'Disconnect'
                           }
-            return standardReturn(statusCode=HTTPStatus.UNPROCESSABLE_ENTITY,
+            apiLogger.logInfo(f"unable to find requested Access Point {apMac}. error: {err}")
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
                                   statusText='NOT_ON_CONTROLLER',
                                   response=returnDict)
-        controllerIp = dfForReturn.iloc[0]['controllerIp']
+        try:
+            # the loc function returns a key error if unable to find a controller ip
+            controllerIp = dfForReturn.iloc[0]['controllerIp']
+        except KeyError as err:
+            apiLogger.logInfo(f"unable to find requested Access Point {apMac}. error: {err}")
+            returnDict = {'mac': apMac,
+                          'Model': None,
+                          'Name': None,
+                          'ip': None,
+                          'configState': None,
+                          'connectionState': 'Disconnect'
+                          }
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
+                                  statusText='CONTROLLER_FAILURE', response=returnDict)
+
         apName = dfForReturn.iloc[0]['apName']
         apConfigGeneral = self.getApConfigGeneral(controllerIp, apName)
+
+        if apConfigGeneral['status_code']:
+            returnDict = {'mac': dfForReturn.iloc[0]['mac'],
+                          'Model': dfForReturn.iloc[0]['apModel'],
+                          'Name': apName,
+                          'ip': dfForReturn.iloc[0]['ip'],
+                          'configState': None,
+                          'connectionState': 'Disconnect'
+                          }
+            apiLogger.logInfo(f"unable to find requested Access Point {apMac} Status.")
+            return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
+                                  statusText='CONTROLLER_FAILURE', response=returnDict)
+
         # return dfForReturn.to_dict(orient='index')
         # return a usable dict object
         returnDict = {'mac': dfForReturn.iloc[0]['mac'],
@@ -213,4 +259,5 @@ class CiscoWlcFunctions():
                       'configState': apConfigGeneral[0]['operation_state'],
                       'connectionState': 'Connect'
                       }
+        apiLogger.logInfo(f"Found Requested Access Point {apMac}")
         return standardReturn(statusCode=HTTPStatus.OK, statusText='FOUND_ON_CONTROLLER', response=returnDict)
