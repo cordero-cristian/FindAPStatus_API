@@ -216,23 +216,9 @@ class CiscoWlcFunctions():
             return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
                                   statusText='SYSTEM_EXCEPTION',
                                   response=allAccessPointDf)
-        try:
-            # find the Ap
-            # this will return an empty Data Frame if no mac is found
-            dfForReturn = allAccessPointDf.loc[allAccessPointDf['mac'] == apMac]
-            apiLogger.logInfo(f"Found requested Access Point {apMac}")
-        except IndexError as err:
-            returnDict = {'mac': None,
-                          'Model': None,
-                          'Name': None,
-                          'ip': None,
-                          'configState': None,
-                          'connectionState': 'Disconnect'
-                          }
-            apiLogger.logInfo(f"unable to find requested Access Point {apMac}. error: {err}")
-            return standardReturn(statusCode=HTTPStatus.OK,
-                                  statusText='NOT_ON_CONTROLLER',
-                                  response=returnDict)
+        # try to find the Ap
+        # this will return an empty Data Frame if no mac is found
+        dfForReturn = allAccessPointDf.loc[allAccessPointDf['mac'] == apMac]
         try:
             # the loc function returns a key error if unable to find a controller ip
             controllerIp = dfForReturn.iloc[0]['controllerIp']
@@ -247,6 +233,18 @@ class CiscoWlcFunctions():
                           }
             return standardReturn(statusCode=HTTPStatus.SERVICE_UNAVAILABLE,
                                   statusText='CONTROLLER_FAILURE', response=returnDict)
+         except IndexError as err:
+            returnDict = {'mac': None,
+                          'Model': None,
+                          'Name': None,
+                          'ip': None,
+                          'configState': None,
+                          'connectionState': 'Disconnect'
+                          }
+            apiLogger.logInfo(f"unable to find requested Access Point {apMac}. error: {err}")
+            return standardReturn(statusCode=HTTPStatus.OK,
+                                  statusText='NOT_ON_CONTROLLER',
+                                  response=returnDict)
 
         apName = dfForReturn.iloc[0]['apName']
         apConfigGeneral = self.getApConfigGeneral(controllerIp, apName)
