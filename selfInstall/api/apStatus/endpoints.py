@@ -64,7 +64,7 @@ Can be one of the following:
 **NO_RND_SESSIONS** - No Ruckus Network Director sessions are available.
 
 
-**CONTROLLER_FAILURE** - The AP mac is not found on a controller, and one of the controllers cannot be contacted.  
+**CONTROLLER_FAILURE** - The AP mac is not found on a controller, and one of the controllers cannot be contacted.
 
 
 **SYSTEM_EXCEPTION** - Other execption for Controller realated issues.
