@@ -1,1 +1,1 @@
-![Charter Logo](images/Charter_R_Logo_RGB.png)
+![Charter Logo](https://gitlab.spectrumflow.net/cristian.cordero/self_install_api/-/blob/images/images/Charter_R_Logo_RGB.png?raw=true)
