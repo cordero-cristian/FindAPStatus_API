@@ -1,6 +1,6 @@
 ![Charter Logo](images/images_Charter_R_Logo_RGB.png)
 
-# Wireless Automation and Analytics (WAA) Self- Install API
+# Wireless Automation and Analytics (WAA) SMB  Self-Install API
 
 #### Summary:
 
