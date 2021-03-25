@@ -10,7 +10,7 @@ It queries various systems in real-time and will return a response detailing inf
 
 #### Sequence Flow:
 
-![flow diagram](images\flow.png)
+![flow diagram](images/flow.png)
 
 
 #### Target Audience:
@@ -28,11 +28,11 @@ https://wno-waa-api-self-install.charter.com/api/v1/ui
 #### API Flow:
 
 ##### Ruckus:
-![Ruckus api flow diagram](images\apiFlow.png)
+![Ruckus api flow diagram](images/apiFlow.png)
 
 ##### Cisco:
 
-![Cisco api flow diagram](images\ciscoApiFlow.png)
+![Cisco api flow diagram](images/ciscoApiFlow.png)
 
 #### Access Point Controller Join Chronology:
 
