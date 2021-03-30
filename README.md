@@ -130,7 +130,7 @@ Access is granted by Wifi Analytics and Automation for a specific application.  
 #### System Information
 
 ##### Framework:
-The API Framework was developed and is maintained via following Python Modules
+The API Framework was developed and is maintained via the following Python Modules
 1. Flask: https://flask.palletsprojects.com/en/1.1.x/
 2. FlaskRestX: https://flask-restx.readthedocs.io/en/latest/
 
