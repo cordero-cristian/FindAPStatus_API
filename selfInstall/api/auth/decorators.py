@@ -4,7 +4,8 @@ from flask import request
 
 from selfInstall.api.exceptions import ApiUnauthorized, ApiForbidden
 from selfInstall.models.users import User
-
+from LoggingFunctions.apiLogger import apiLogger
+apiLogger=apiLogger(__name__)
 
 def tokenRequired(f):
     """Execute function if request contains valid access token."""
@@ -35,7 +36,9 @@ def adminTokenRequired(f):
 
 
 def checkAccessToken():
+
     token = request.headers.get("Authorization")
+    apiLogger.logInfo(f"decoded token : {token} ")
     if not token:
         raise ApiUnauthorized(description="Unauthorized")
     result = User.decodeAccessToken(token)
