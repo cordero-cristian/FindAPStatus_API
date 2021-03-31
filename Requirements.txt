@@ -9,7 +9,7 @@ python-dotenv
 requests
 urllib3
 werkzeug==0.16.1
-uwsgi
+gunicorn
 pandas
 netmiko
 SQLAlchemy==1.3.23
