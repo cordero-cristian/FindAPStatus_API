@@ -1,9 +1,15 @@
 import os
 import click
+from flask import redirect, url_for
 
 from selfInstall import createApp, db
 from selfInstall.models.users import User
 app = createApp(os.getenv("FLASK_ENV", "development"))
+
+
+@app.route('/')
+def ToSwagger():
+    return redirect(url_for('api.doc'))
 
 
 @app.shell_context_processor
