@@ -1,10 +1,9 @@
-![Charter Logo](images/images_Charter_R_Logo_RGB.png)
 
-# Wireless Automation and Analytics (WAA) SMB  Self-Install API
+#FindAPStatus_API
 
 #### Summary:
 
-The WNO AP Status API was developed and is maintained by the Wireless Analytics and Automation (WAA) department at Charter and will return the status of a given Access Point (AP) mac on any Wireless Network Operations (WNO) public Wi-Fi controller by querying the various WNO Wi-Fi controller systems where the AP would connect.  
+The FindAPStatus_API API will return the status of a given Access Point (AP) mac on any Wi-Fi controller by querying the various Wi-Fi controller systems where the AP would connect.  
 
 It queries various systems in real-time and will return a response detailing information regarding the AP’s operational status.  It will give in-depth details about a AP’s connection status, configuration status (readiness to transmit), and also return other various status codes in the event of a failure.  The API is vendor-agnostic, so it will return a normalized payload for both Ruckus and Cisco APs, and will also be updated as new AP vendors are deployed by WNO.
 
