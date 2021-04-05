@@ -20,9 +20,9 @@ The API is intended to support any Charter development requiring real-time statu
 #### End-Point URLS:
 
 ##### Access Point Status API Endpoint
-https://wno-waa-api-self-install.charter.com/api/v1/self-install/accessPointStatus
+https://PATH/accessPointStatus
 ##### Swagger documentation:
-https://wno-waa-api-self-install.charter.com/api/v1/ui
+https://PATH/ui
 
 
 #### API Flow:
@@ -38,7 +38,7 @@ https://wno-waa-api-self-install.charter.com/api/v1/ui
 
 1. Cable Modem (‘CM’) with ISIW tag joins CMTS
 	
-2. AP connects to CM and gets ISIW space IP from DHCP.  IP is registered to DLPQS API, available from APO
+2. AP connects to CM and gets ISIW space IP from DHCP.  
 
 3. Depending on AP vendor, AP retrieves vendor-specific option 43 from DHCP
 
@@ -203,10 +203,10 @@ https://nginx.org/en/docs/
         [Service]  
         User=changeme   
         Group=changeme  
-        WorkingDirectory=/path/to/repo/self_install_api/
-        Environment="PATH=/path/to/repo/self_install_api/bin/"
-        EnvironmentFile=/path/to/repo/self_install_api/.env
-        ExecStart=/path/to/repo/self_install_api/bin/gunicorn --workers 3 --timeout 75 --bind /path/to/unix:selfInstallApi.sock -m 007 run:app
+        WorkingDirectory=/path/to/repo/FindAPStatus_API/
+        Environment="PATH=/path/to/repo/FindAPStatus_API/bin/"
+        EnvironmentFile=/path/to/repo/FindAPStatus_API/.env
+        ExecStart=/path/to/repo/FindAPStatus_API/bin/gunicorn --workers 3 --timeout 75 --bind /path/to/unix:selfInstallApi.sock -m 007 run:app
 
         [Install]
         WantedBy=multi-user.target
