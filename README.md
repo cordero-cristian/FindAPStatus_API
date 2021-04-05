@@ -92,10 +92,10 @@ Returned when no Ruckus Network Director sessions are available.
 #### API Return Payload:
 
         {
-        "mac":"58:93:96:27:C8:30",
+        "mac":"aA:bB:cC:dD:Ee:Ff",
         "model":"ZF7762-AC",
-        "name":"2140533_VENUEBASE_COAX",
-        "ip":"67.49.162.181",
+        "name":"AP_NAME",
+        "ip":"x.x.x.x",
         "configState":"completed",
         "connectionState":"Connect",
         "vendor":"’Ruckus’"
