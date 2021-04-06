@@ -123,7 +123,7 @@ Returned when no Ruckus Network Director sessions are available.
 
 #### API Access
 
-Access is granted by Wifi Analytics and Automation for a specific application.  A request should be sent to DL-NTO-Wireless-Analytics@charter.com.  Authorization tokens should be protected and not shared between individuals or other departments.
+Access is granted by Wifi Analytics and Automation for a specific application.  A request should be sent to.  Authorization tokens should be protected and not shared between individuals or other departments.
 
 
 #### System Information
